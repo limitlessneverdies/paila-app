@@ -1,0 +1,4188 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#eeefed">
+  <meta name="color-scheme" content="light">
+  <meta
+    name="description"
+    content="Meet Paila. A wallet for connected days and the moments in between. Nearby offline exchanges, thoughtful design, and settlement when you reconnect. Current release uses test credit only."
+  >
+  <title>Paila — A little less distance.</title>
+
+  <link
+    rel="icon"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='20' fill='%23dce9d5'/%3E%3Ctext x='14' y='46' font-family='Arial,sans-serif' font-size='46' font-weight='700' fill='%23252b28'%3Ep%3C/text%3E%3C/svg%3E"
+  >
+
+  <style>
+    /* -------------------------------------------------
+       PAILA
+       Single-file site. All artwork is embedded.
+       No analytics, payment requests, or external scripts.
+    -------------------------------------------------- */
+
+    :root {
+      --paper: #eeefed;
+      --ink: #252b28;
+      --muted: #626a64;
+      --line: rgba(55, 66, 57, .12);
+      --white: #ffffff;
+      --mint: #e0edce;
+      --lime: #e1f4b5;
+      --green: #315d43;
+      --peach: #f1d5c7;
+      --lilac: #ded8eb;
+      --radius: 28px;
+      --ease: cubic-bezier(.22, 1, .36, 1);
+      --shadow:
+        0 20px 60px rgba(51, 62, 52, .055),
+        inset 0 1px 0 rgba(255, 255, 255, .9);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 110px;
+      color-scheme: light;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family:
+        "Avenir Next", "Segoe UI", -apple-system,
+        BlinkMacSystemFont, Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button,
+    a,
+    summary {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button {
+      color: inherit;
+    }
+
+    button:not(:disabled),
+    summary {
+      cursor: pointer;
+    }
+
+    button:disabled {
+      cursor: default;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    p,
+    h1,
+    h2,
+    h3,
+    h4,
+    figure {
+      margin: 0;
+    }
+
+    img,
+    svg,
+    canvas {
+      max-width: 100%;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    ::selection {
+      background: #d8eabf;
+      color: var(--ink);
+    }
+
+    :focus-visible {
+      outline: 3px solid #45694d;
+      outline-offset: 5px;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .skip-link {
+      position: fixed;
+      z-index: 100;
+      left: 20px;
+      top: 12px;
+      padding: 12px 20px;
+      border-radius: 12px;
+      color: white;
+      background: var(--ink);
+      transform: translateY(-160%);
+    }
+
+    .skip-link:focus {
+      transform: translateY(0);
+    }
+
+    .shell {
+      width: min(1240px, calc(100% - 64px));
+      margin-inline: auto;
+    }
+
+    .background {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      z-index: -2;
+      pointer-events: none;
+      background:
+        radial-gradient(
+          ellipse at 90% 14%,
+          rgba(208, 221, 213, .44),
+          transparent 42%
+        ),
+        radial-gradient(
+          ellipse at 12% 62%,
+          rgba(228, 217, 233, .25),
+          transparent 38%
+        ),
+        #eeefed;
+    }
+
+    .background::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: .025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' opacity='.8' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    .icon {
+      width: 20px;
+      height: 20px;
+      flex: 0 0 auto;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.7;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .glass {
+      border: 1px solid rgba(255, 255, 255, .96);
+      background: rgba(255, 255, 255, .48);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(20px);
+    }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 1.5;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      background: #709675;
+      box-shadow: 0 0 0 4px rgba(112, 150, 117, .1);
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 22px;
+      min-height: 54px;
+      padding: 11px 13px 11px 24px;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      color: white;
+      background: var(--ink);
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.3;
+      transition:
+        transform .3s var(--ease),
+        box-shadow .3s var(--ease),
+        background .3s ease;
+    }
+
+    .button-arrow {
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      color: var(--ink);
+      background: var(--lime);
+    }
+
+    .button-arrow .icon {
+      width: 16px;
+      height: 16px;
+      transition: transform .3s var(--ease);
+    }
+
+    .text-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 44px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .text-link .icon {
+      width: 16px;
+      height: 16px;
+      transition: transform .3s var(--ease);
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    /* Header */
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      border-bottom: 1px solid rgba(255, 255, 255, .65);
+      background: rgba(238, 239, 237, .82);
+      -webkit-backdrop-filter: blur(22px);
+      backdrop-filter: blur(22px);
+    }
+
+    .nav-inner {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      min-height: 82px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 44px;
+      font-size: 25px;
+      font-weight: 700;
+      letter-spacing: -.06em;
+    }
+
+    .brand-orb {
+      position: relative;
+      width: 28px;
+      height: 28px;
+      flex: 0 0 auto;
+      overflow: hidden;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 28% 24%, #fff1d9, transparent 39%),
+        radial-gradient(circle at 70% 75%, #c67167, transparent 55%),
+        linear-gradient(130deg, #f6d5b7, #ecaba2 55%, #bfaacb);
+      box-shadow:
+        inset -3px -4px 8px rgba(115, 76, 87, .12),
+        0 4px 12px rgba(169, 108, 90, .15);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 29px;
+      margin-inline: auto;
+    }
+
+    .nav-links a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      color: #60665f;
+      font-size: 12px;
+      font-weight: 500;
+      transition: color .2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--ink);
+    }
+
+    .nav-download {
+      min-height: 43px;
+      padding: 8px 10px 8px 17px;
+      gap: 16px;
+      font-size: 12px;
+    }
+
+    .nav-download .button-arrow {
+      width: 26px;
+      height: 26px;
+    }
+
+    .menu-toggle {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .65);
+    }
+
+    /* Hero */
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr);
+      align-items: center;
+      gap: 48px;
+      padding-block: 80px 65px;
+    }
+
+    .hero > *,
+    .experience-grid > *,
+    .feature-grid > *,
+    .details-layout > *,
+    .download-card > * {
+      min-width: 0;
+    }
+
+    .hero-copy {
+      padding-bottom: 24px;
+    }
+
+    .hero-copy > .eyebrow {
+      margin-bottom: 26px;
+      color: #5c675e;
+    }
+
+    h1 {
+      max-width: 600px;
+      font-size: clamp(58px, 6.1vw, 92px);
+      font-weight: 500;
+      line-height: 1.025;
+      letter-spacing: -.075em;
+    }
+
+    .editorial {
+      display: block;
+      margin-top: 4px;
+      color: #6d7c6b;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: .99em;
+      font-weight: 400;
+      font-style: italic;
+      letter-spacing: -.065em;
+    }
+
+    .hero-description {
+      max-width: 390px;
+      margin-top: 27px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.85;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 22px;
+      margin-top: 31px;
+    }
+
+    .hero-disclosure {
+      margin-top: 15px;
+      color: #676e67;
+      font-size: 11px;
+    }
+
+    .hero-footnote {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      margin-top: 49px;
+      color: #717770;
+      font-size: 11px;
+    }
+
+    .footnote-line {
+      width: 30px;
+      height: 1px;
+      background: #b1b9ad;
+    }
+
+    /* Interactive bento */
+
+    .experience {
+      position: relative;
+      isolation: isolate;
+    }
+
+    .experience::before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      inset: 5% -2% 0;
+      border-radius: 50%;
+      background:
+        radial-gradient(
+          ellipse at 25% 85%,
+          rgba(237, 182, 167, .5),
+          transparent 60%
+        ),
+        radial-gradient(
+          ellipse at 85% 75%,
+          rgba(186, 167, 221, .44),
+          transparent 63%
+        ),
+        radial-gradient(
+          ellipse at 60% 0,
+          rgba(199, 227, 201, .6),
+          transparent 65%
+        );
+      filter: blur(34px);
+      pointer-events: none;
+    }
+
+    .experience-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr);
+      grid-template-rows: 1fr 1fr;
+      gap: 13px;
+    }
+
+    .preview-hint {
+      position: absolute;
+      z-index: 3;
+      top: -19px;
+      right: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 14px;
+      border: 1px solid white;
+      border-radius: 100px;
+      color: #56604f;
+      background: #f3f7e9;
+      box-shadow: 0 7px 22px rgba(46, 58, 38, .06);
+      font-size: 10px;
+      transform: rotate(4deg);
+      pointer-events: none;
+    }
+
+    .wallet {
+      grid-column: 1;
+      grid-row: 1 / 3;
+      padding: 20px;
+      background: rgba(255, 255, 255, .63);
+    }
+
+    .wallet-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      min-height: 44px;
+    }
+
+    .mini-brand {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 16px;
+      font-weight: 650;
+      letter-spacing: -.05em;
+    }
+
+    .mini-brand .brand-orb {
+      width: 20px;
+      height: 20px;
+    }
+
+    .connection-switch {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      min-height: 44px;
+      padding: 7px 10px;
+      border: 1px solid rgba(78, 91, 72, .13);
+      border-radius: 30px;
+      color: #4f5d4c;
+      background: rgba(246, 248, 241, .9);
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .has-js .connection-switch {
+      display: inline-flex;
+    }
+
+    .switch-track {
+      position: relative;
+      width: 24px;
+      height: 14px;
+      flex: 0 0 auto;
+      border-radius: 20px;
+      background: #d5d9d1;
+      transition: background .25s;
+    }
+
+    .switch-track::after {
+      content: "";
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      left: 2px;
+      top: 2px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, .12);
+      transition: transform .25s var(--ease);
+    }
+
+    .connection-switch[aria-checked="true"] .switch-track {
+      background: #7f9c74;
+    }
+
+    .connection-switch[aria-checked="true"] .switch-track::after {
+      transform: translateX(10px);
+    }
+
+    .connection-switch:disabled {
+      opacity: .7;
+    }
+
+    .wallet-main {
+      min-height: 296px;
+    }
+
+    .balance-label {
+      margin-top: 15px;
+      color: #687264;
+      font-size: 10px;
+    }
+
+    .balance {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-top: 2px;
+      font-size: 45px;
+      font-weight: 450;
+      line-height: 1.15;
+      letter-spacing: -.065em;
+    }
+
+    .balance small {
+      font-size: 17px;
+      letter-spacing: -.03em;
+    }
+
+    .balance-note {
+      margin-top: 4px;
+      color: #747b72;
+      font-size: 9px;
+    }
+
+    .wallet-landscape {
+      display: block;
+      width: 100%;
+      height: 86px;
+      margin-top: 13px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, .8);
+      border-radius: 16px;
+      background: #e4ebe2;
+    }
+
+    .recipient {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-top: 15px;
+    }
+
+    .recipient-avatar {
+      display: grid;
+      place-items: center;
+      width: 35px;
+      height: 35px;
+      flex: 0 0 auto;
+      border: 1px solid rgba(255, 255, 255, .9);
+      border-radius: 12px;
+      color: #635a4f;
+      background: linear-gradient(145deg, #f0d8c5, #e4e0d6);
+      font-family: Georgia, serif;
+      font-size: 19px;
+      font-style: italic;
+    }
+
+    .recipient-name {
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .recipient-meta {
+      margin-top: 2px;
+      color: #697166;
+      font-size: 9px;
+    }
+
+    .recipient > .icon {
+      width: 15px;
+      height: 15px;
+      margin-left: auto;
+      color: #66775d;
+    }
+
+    .send-summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 12px;
+      padding-top: 11px;
+      border-top: 1px solid var(--line);
+      font-size: 10px;
+    }
+
+    .send-summary strong {
+      font-size: 23px;
+      font-weight: 500;
+      letter-spacing: -.045em;
+    }
+
+    .preview-controls {
+      display: none;
+      margin-top: 15px;
+    }
+
+    .has-js .preview-controls {
+      display: block;
+    }
+
+    .channel-list {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 4px;
+      padding: 4px;
+      border: 1px solid rgba(255, 255, 255, .9);
+      border-radius: 15px;
+      background: rgba(232, 235, 229, .57);
+    }
+
+    .channel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      min-width: 0;
+      min-height: 45px;
+      padding: 5px 1px;
+      border: 1px solid transparent;
+      border-radius: 11px;
+      color: #63705c;
+      background: transparent;
+      font-size: 8px;
+      line-height: 1.2;
+      transition:
+        background .25s,
+        box-shadow .25s,
+        color .25s;
+    }
+
+    .channel .icon {
+      width: 15px;
+      height: 15px;
+    }
+
+    .channel[aria-pressed="true"] {
+      border-color: rgba(255, 255, 255, .95);
+      color: #31442d;
+      background: #fff;
+      box-shadow: 0 3px 8px rgba(46, 62, 40, .055);
+    }
+
+    .channel:disabled:not([aria-pressed="true"]) {
+      opacity: .42;
+    }
+
+    .channel-note {
+      min-height: 37px;
+      margin: 9px 1px 5px;
+      color: #616b5b;
+      font-size: 9px;
+      line-height: 1.65;
+    }
+
+    .preview-button {
+      display: flex;
+      width: 100%;
+      min-height: 47px;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 10px 17px;
+      border: 0;
+      border-radius: 15px;
+      color: #f8fbf4;
+      background: #2d3b2e;
+      font-size: 11px;
+      font-weight: 600;
+      transition: background .25s, transform .25s var(--ease);
+    }
+
+    .preview-button .icon {
+      width: 15px;
+      height: 15px;
+    }
+
+    .preview-button:disabled {
+      color: #dee5da;
+      background: #56624f;
+    }
+
+    .preview-disclosure {
+      margin-top: 11px;
+      color: #67705f;
+      font-size: 9px;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    .result-view {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 296px;
+      padding-block: 20px 10px;
+      text-align: center;
+    }
+
+    .result-symbol {
+      display: grid;
+      place-items: center;
+      width: 77px;
+      height: 77px;
+      margin-bottom: 18px;
+      border: 1px solid rgba(255, 255, 255, .95);
+      border-radius: 25px;
+      color: #45623d;
+      background:
+        radial-gradient(circle at 25% 20%, #fff, transparent 55%),
+        linear-gradient(135deg, #eaf2df, #c6d9b3);
+      box-shadow:
+        0 12px 24px rgba(73, 103, 51, .10),
+        inset 0 -5px 12px rgba(108, 142, 81, .09);
+      transform: rotate(-8deg);
+    }
+
+    .result-symbol .icon {
+      width: 35px;
+      height: 35px;
+      stroke-width: 1.5;
+      transform: rotate(8deg);
+    }
+
+    .result-title {
+      max-width: 225px;
+      font-size: 24px;
+      font-weight: 500;
+      line-height: 1.13;
+      letter-spacing: -.055em;
+    }
+
+    .result-amount {
+      margin-top: 13px;
+      font-size: 39px;
+      font-weight: 450;
+      line-height: 1.2;
+      letter-spacing: -.065em;
+    }
+
+    .result-copy {
+      max-width: 215px;
+      margin-top: 10px;
+      color: #63705b;
+      font-size: 10px;
+      line-height: 1.7;
+    }
+
+    .wallet[data-phase="settled"] .result-symbol {
+      animation: receipt-arrive .8s var(--ease) both;
+    }
+
+    .wallet[data-phase="sending"] .preview-button .icon,
+    .wallet[data-phase="syncing"] .preview-button .icon {
+      animation: small-turn 1.5s linear infinite;
+    }
+
+    .art-card {
+      grid-column: 2;
+      grid-row: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      padding: 20px 17px 16px;
+      background: rgba(247, 246, 247, .5);
+    }
+
+    .art-card .eyebrow {
+      color: #6b6b72;
+      font-size: 8px;
+      letter-spacing: .12em;
+    }
+
+    .art-card h3 {
+      max-width: 170px;
+      margin-top: 9px;
+      font-size: 20px;
+      font-weight: 450;
+      line-height: 1.12;
+      letter-spacing: -.055em;
+    }
+
+    .sculpture {
+      position: relative;
+      flex: 1;
+      min-height: 145px;
+      height: 185px;
+      margin-inline: -7px;
+      touch-action: pan-y;
+    }
+
+    .sculpture canvas,
+    .sculpture-fallback {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .sculpture canvas {
+      opacity: 0;
+      transition: opacity .5s;
+    }
+
+    .sculpture.ready canvas {
+      opacity: 1;
+    }
+
+    .sculpture.ready .sculpture-fallback {
+      opacity: 0;
+    }
+
+    .sculpture-fallback {
+      transition: opacity .5s;
+    }
+
+    .art-caption {
+      color: #6b6b72;
+      font-size: 8px;
+      text-align: center;
+    }
+
+    .journey-card {
+      grid-column: 2;
+      grid-row: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 22px 18px;
+      background: rgba(249, 246, 246, .46);
+    }
+
+    .journey-card .eyebrow {
+      font-size: 8px;
+      color: #737167;
+    }
+
+    .journey-card h3 {
+      margin-top: 10px;
+      font-size: 21px;
+      font-weight: 450;
+      line-height: 1.14;
+      letter-spacing: -.05em;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 18px;
+      padding: 0;
+      margin: 25px 0 0;
+      list-style: none;
+    }
+
+    .timeline-step {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: #777a70;
+      font-size: 10px;
+      line-height: 1.3;
+    }
+
+    .timeline-index {
+      display: grid;
+      place-items: center;
+      width: 24px;
+      height: 24px;
+      flex: 0 0 auto;
+      border: 1px solid rgba(116, 122, 103, .15);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .52);
+      font-size: 9px;
+      transition: background .3s, color .3s;
+    }
+
+    .timeline-step.done {
+      color: #42573a;
+    }
+
+    .timeline-step.done .timeline-index {
+      border-color: #d4e4c4;
+      background: #e6efdc;
+    }
+
+    .timeline-step.waiting .timeline-index {
+      border-color: #e7d8b1;
+      color: #796035;
+      background: #f3ead1;
+    }
+
+    .journey-note {
+      margin-top: 23px;
+      color: #6f7467;
+      font-size: 9px;
+      line-height: 1.65;
+    }
+
+    .experience-caption {
+      margin-top: 16px;
+      color: #73766e;
+      font-size: 10px;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    /* Small credibility strip, not fabricated social proof */
+
+    .quiet-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 25px;
+      padding-block: 23px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      color: #697166;
+    }
+
+    .quiet-strip p {
+      font-size: 12px;
+    }
+
+    .quiet-strip-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 29px;
+    }
+
+    .quiet-strip-items span {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 10px;
+      white-space: nowrap;
+    }
+
+    .quiet-strip-items .icon {
+      width: 15px;
+      height: 15px;
+    }
+
+    /* Feature art */
+
+    .section {
+      padding-block: 94px;
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 38px;
+      margin-bottom: 34px;
+    }
+
+    .section-heading .eyebrow {
+      margin-bottom: 17px;
+      color: #737b70;
+    }
+
+    h2 {
+      font-size: clamp(35px, 4.1vw, 56px);
+      font-weight: 450;
+      line-height: 1.08;
+      letter-spacing: -.06em;
+    }
+
+    .section-heading > p {
+      max-width: 300px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
+      gap: 18px;
+    }
+
+    .feature-card {
+      position: relative;
+      min-height: 410px;
+      overflow: hidden;
+      border-radius: 30px;
+      border: 1px solid rgba(255, 255, 255, .95);
+      box-shadow: var(--shadow);
+    }
+
+    .feature-copy {
+      position: relative;
+      z-index: 2;
+      padding: 30px;
+    }
+
+    .feature-copy .eyebrow {
+      color: #64765f;
+      font-size: 9px;
+      letter-spacing: .12em;
+    }
+
+    .feature-copy h3 {
+      max-width: 310px;
+      margin-top: 13px;
+      font-size: 32px;
+      font-weight: 450;
+      line-height: 1.12;
+      letter-spacing: -.055em;
+    }
+
+    .feature-copy p {
+      max-width: 320px;
+      margin-top: 12px;
+      color: #63705e;
+      font-size: 12px;
+      line-height: 1.85;
+    }
+
+    .landscape-feature {
+      background: #e6ece3;
+    }
+
+    .landscape-feature::after {
+      content: "";
+      position: absolute;
+      z-index: 1;
+      inset: 0;
+      background: linear-gradient(
+        180deg,
+        rgba(241, 244, 235, .94),
+        rgba(241, 244, 235, .75) 30%,
+        transparent 65%
+      );
+      pointer-events: none;
+    }
+
+    .feature-landscape {
+      position: absolute;
+      inset: auto 0 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .landscape-label {
+      position: absolute;
+      z-index: 3;
+      left: 28px;
+      bottom: 27px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 13px;
+      border: 1px solid rgba(255, 255, 255, .92);
+      border-radius: 100px;
+      color: #44543e;
+      background: rgba(249, 252, 243, .73);
+      -webkit-backdrop-filter: blur(16px);
+      backdrop-filter: blur(16px);
+      font-size: 10px;
+    }
+
+    .nearby-feature {
+      background:
+        radial-gradient(
+          ellipse at 60% 86%,
+          rgba(221, 203, 229, .75),
+          transparent 65%
+        ),
+        #e9e9e8;
+    }
+
+    .nearby-feature .feature-copy .eyebrow {
+      color: #77717f;
+    }
+
+    .nearby-feature .feature-copy p {
+      color: #6a6570;
+    }
+
+    .peer-scene {
+      position: relative;
+      min-height: 235px;
+      margin-top: -14px;
+      overflow: hidden;
+      perspective: 800px;
+    }
+
+    .tiny-phone {
+      position: absolute;
+      bottom: 16px;
+      width: 114px;
+      height: 178px;
+      padding: 10px;
+      border: 4px solid #f9faf6;
+      border-radius: 25px;
+      background:
+        radial-gradient(circle at 10% 90%, #e2e8d9, transparent 70%),
+        linear-gradient(160deg, #f9f8f3, #e4dedf);
+      box-shadow:
+        1px 2px 0 #b7b9b4,
+        3px 4px 0 #cdcfca,
+        9px 23px 30px rgba(60, 53, 67, .12);
+      text-align: center;
+    }
+
+    .tiny-phone::before {
+      content: "";
+      display: block;
+      width: 29px;
+      height: 6px;
+      margin: -1px auto 19px;
+      border-radius: 6px;
+      background: #454942;
+    }
+
+    .tiny-phone.left {
+      left: calc(50% - 143px);
+      transform: rotate(-13deg) rotateY(12deg);
+    }
+
+    .tiny-phone.right {
+      right: calc(50% - 143px);
+      transform: rotate(12deg) rotateY(-12deg);
+    }
+
+    .tiny-phone .phone-label {
+      color: #6e7367;
+      font-size: 8px;
+    }
+
+    .tiny-phone strong {
+      display: block;
+      margin-top: 4px;
+      font-size: 19px;
+      font-weight: 500;
+      letter-spacing: -.06em;
+    }
+
+    .tiny-phone .phone-check {
+      display: grid;
+      place-items: center;
+      width: 33px;
+      height: 33px;
+      margin: 11px auto 8px;
+      border-radius: 50%;
+      color: #4d6540;
+      background: #dae8c9;
+    }
+
+    .tiny-phone .phone-check .icon {
+      width: 17px;
+      height: 17px;
+    }
+
+    .phone-bottom {
+      display: block;
+      width: 33px;
+      height: 3px;
+      margin: 13px auto 0;
+      border-radius: 4px;
+      background: #7a7e72;
+    }
+
+    .connection-beacon {
+      position: absolute;
+      z-index: 2;
+      left: calc(50% - 20px);
+      top: 96px;
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      border: 1px solid #fff;
+      border-radius: 50%;
+      color: #667a59;
+      background: #eef3e7;
+      box-shadow: 0 8px 20px rgba(65, 77, 55, .1);
+    }
+
+    .connection-beacon::before,
+    .connection-beacon::after {
+      content: "";
+      position: absolute;
+      inset: -9px;
+      border: 1px solid rgba(121, 150, 101, .35);
+      border-radius: 50%;
+      animation: connection-ring 3.8s ease-out infinite;
+    }
+
+    .connection-beacon::after {
+      animation-delay: 1.9s;
+    }
+
+    /* Steps */
+
+    .how-section {
+      padding-top: 8px;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 40px;
+      margin-top: 43px;
+    }
+
+    .step {
+      min-width: 0;
+      padding-top: 22px;
+      border-top: 1px solid #cfd5c9;
+    }
+
+    .step-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .step-number {
+      color: #9da794;
+      font-size: 30px;
+      font-weight: 400;
+      letter-spacing: -.055em;
+    }
+
+    .step-tag {
+      padding: 5px 10px;
+      border: 1px solid #d7ddd1;
+      border-radius: 100px;
+      color: #65715b;
+      font-size: 9px;
+    }
+
+    .step h3 {
+      font-size: 22px;
+      font-weight: 500;
+      line-height: 1.2;
+      letter-spacing: -.045em;
+    }
+
+    .step p {
+      max-width: 325px;
+      margin-top: 13px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.9;
+    }
+
+    /* Security / FAQs */
+
+    .details-section {
+      border-top: 1px solid var(--line);
+    }
+
+    .details-layout {
+      display: grid;
+      grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr);
+      gap: 80px;
+    }
+
+    .details-intro .eyebrow {
+      margin-bottom: 18px;
+      color: #727b6a;
+    }
+
+    .details-intro > p {
+      max-width: 330px;
+      margin-top: 23px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.85;
+    }
+
+    .details-intro > .text-link {
+      margin-top: 21px;
+    }
+
+    .security-note {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      max-width: 330px;
+      margin-top: 35px;
+      padding: 17px 18px;
+      border: 1px solid rgba(255, 255, 255, .95);
+      border-radius: 17px;
+      background: rgba(255, 255, 255, .4);
+      color: #61705a;
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    .security-note .icon {
+      width: 22px;
+      height: 22px;
+    }
+
+    .faq {
+      border-bottom: 1px solid var(--line);
+    }
+
+    .faq:first-child {
+      border-top: 1px solid var(--line);
+    }
+
+    .faq summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      min-height: 76px;
+      padding-block: 20px;
+      list-style: none;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.5;
+    }
+
+    .faq summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .faq summary::after {
+      content: "+";
+      display: grid;
+      place-items: center;
+      width: 29px;
+      height: 29px;
+      flex: 0 0 auto;
+      border: 1px solid #d1d7cb;
+      border-radius: 50%;
+      color: #68745f;
+      font-size: 19px;
+      font-weight: 400;
+      line-height: 1;
+    }
+
+    .faq[open] summary::after {
+      content: "−";
+    }
+
+    .faq-answer {
+      padding: 0 35px 24px 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.9;
+    }
+
+    .faq-answer p + p {
+      margin-top: 12px;
+    }
+
+    .faq-answer strong {
+      color: #46513f;
+      font-weight: 600;
+    }
+
+    /* Documentation and author */
+
+    .docs-section {
+      padding-top: 0;
+    }
+
+    .docs-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 19px;
+    }
+
+    .docs-heading h2 {
+      font-size: 30px;
+    }
+
+    .doc-links {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .doc-link {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      min-height: 98px;
+      min-width: 0;
+      padding: 22px;
+      border-radius: 21px;
+      transition:
+        background .3s,
+        transform .3s var(--ease);
+    }
+
+    .doc-link > .icon:first-child {
+      width: 21px;
+      height: 21px;
+      color: #79816f;
+    }
+
+    .doc-link > .icon:last-child {
+      width: 16px;
+      height: 16px;
+      margin-left: auto;
+    }
+
+    .doc-title {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .doc-description {
+      display: block;
+      margin-top: 4px;
+      color: #6f7867;
+      font-size: 10px;
+    }
+
+    .author {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      margin-top: 57px;
+      padding: 30px 0 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .author-monogram {
+      display: grid;
+      place-items: center;
+      width: 66px;
+      height: 66px;
+      flex: 0 0 auto;
+      border: 1px solid white;
+      border-radius: 22px;
+      color: #685b51;
+      background: linear-gradient(135deg, #eee5d9, #e7cec1);
+      font-family: Georgia, serif;
+      font-size: 25px;
+      font-style: italic;
+    }
+
+    .author-copy {
+      max-width: 625px;
+    }
+
+    .author-copy h3 {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .author-copy p {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.85;
+    }
+
+    .author-word {
+      margin-left: auto;
+      color: #818876;
+      font-size: 34px;
+      line-height: 1.3;
+    }
+
+    /* Download */
+
+    .download-section {
+      padding-top: 0;
+    }
+
+    .download-card {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
+      align-items: center;
+      gap: 30px;
+      min-height: 365px;
+      overflow: hidden;
+      padding: 52px;
+      border: 1px solid white;
+      border-radius: 34px;
+      background:
+        radial-gradient(
+          ellipse at 90% 0,
+          rgba(244, 213, 195, .85),
+          transparent 54%
+        ),
+        radial-gradient(
+          ellipse at 80% 100%,
+          rgba(208, 197, 229, .8),
+          transparent 60%
+        ),
+        linear-gradient(120deg, #e8eddf, #e9e4e5);
+      box-shadow: var(--shadow);
+    }
+
+    .download-copy {
+      position: relative;
+      z-index: 2;
+    }
+
+    .download-copy .eyebrow {
+      margin-bottom: 18px;
+      color: #6c775f;
+    }
+
+    .download-copy h2 {
+      font-size: clamp(36px, 4.2vw, 55px);
+    }
+
+    .download-copy .button {
+      margin-top: 27px;
+    }
+
+    .download-fineprint {
+      max-width: 410px;
+      margin-top: 15px;
+      color: #5d6855;
+      font-size: 10px;
+      line-height: 1.8;
+    }
+
+    .download-visual {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 240px;
+      perspective: 900px;
+    }
+
+    .download-visual::before,
+    .download-visual::after {
+      content: "";
+      position: absolute;
+      width: 285px;
+      height: 285px;
+      border: 1px solid rgba(255, 255, 255, .5);
+      border-radius: 50%;
+    }
+
+    .download-visual::after {
+      width: 370px;
+      height: 370px;
+      opacity: .6;
+    }
+
+    .app-icon {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      place-items: center;
+      width: 174px;
+      height: 174px;
+      border: 2px solid rgba(255, 255, 255, .94);
+      border-radius: 44px;
+      background:
+        radial-gradient(circle at 25% 20%, #fffff9, transparent 60%),
+        linear-gradient(145deg, #edf4e6, #c7d6b9);
+      box-shadow:
+        1px 2px 0 #b4c2a8,
+        3px 5px 0 #bcc9b2,
+        5px 8px 0 #b6c2ac,
+        9px 12px 0 #bcc8b3,
+        18px 30px 40px rgba(67, 76, 58, .17),
+        inset 0 -10px 22px rgba(121, 143, 103, .09);
+      transform: rotate(-13deg) rotateY(-18deg) rotateX(9deg);
+      animation: app-float 7s ease-in-out infinite;
+    }
+
+    .app-icon span {
+      margin: -11px 0 0 7px;
+      color: #53664a;
+      font-family: Georgia, serif;
+      font-size: 120px;
+      font-weight: 400;
+      line-height: 1;
+      letter-spacing: -.12em;
+      text-shadow: 0 2px 0 #f9fff4;
+    }
+
+    /* Footer */
+
+    .site-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 0 0 32px;
+      color: #6f7867;
+      font-size: 10px;
+    }
+
+    .footer-left {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .footer-left .brand {
+      color: var(--ink);
+      font-size: 21px;
+    }
+
+    .footer-left .brand-orb {
+      width: 21px;
+      height: 21px;
+    }
+
+    .footer-links {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 21px;
+    }
+
+    .footer-links a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+    }
+
+    .motion-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 44px;
+      padding: 7px 11px;
+      border: 1px solid #d3d9cd;
+      border-radius: 100px;
+      color: #66715d;
+      background: rgba(255, 255, 255, .35);
+      font-size: 10px;
+    }
+
+    .motion-toggle::before {
+      content: "";
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #819575;
+    }
+
+    .motion-toggle[aria-checked="false"]::before {
+      background: #a3a99d;
+    }
+
+    .motion-toggle:disabled {
+      opacity: .7;
+    }
+
+    /* Progressive enhancement */
+
+    .reveal-enabled .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition:
+        opacity .8s var(--ease),
+        transform .8s var(--ease);
+    }
+
+    .reveal-enabled .reveal.is-visible,
+    .reveal-enabled .reveal:focus-within {
+      opacity: 1;
+      transform: none;
+    }
+
+    .qa-panel {
+      margin-bottom: 30px;
+      padding: 18px;
+      border: 1px solid #bdc9b3;
+      border-radius: 14px;
+      background: #f7faf2;
+      font-size: 12px;
+    }
+
+    .qa-panel pre {
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+      font-size: 11px;
+    }
+
+    @keyframes receipt-arrive {
+      from {
+        opacity: .35;
+        transform: rotate(-15deg) scale(.82);
+      }
+      to {
+        opacity: 1;
+        transform: rotate(-8deg) scale(1);
+      }
+    }
+
+    @keyframes connection-ring {
+      0% {
+        opacity: .65;
+        transform: scale(.68);
+      }
+      75%,
+      100% {
+        opacity: 0;
+        transform: scale(1.7);
+      }
+    }
+
+    @keyframes app-float {
+      0%,
+      100% {
+        transform: translateY(0) rotate(-13deg) rotateY(-18deg) rotateX(9deg);
+      }
+      50% {
+        transform: translateY(-12px) rotate(-9deg) rotateY(-12deg) rotateX(13deg);
+      }
+    }
+
+    @keyframes small-turn {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .button:hover {
+        transform: translateY(-3px);
+        background: #354131;
+        box-shadow: 0 10px 25px rgba(37, 43, 40, .12);
+      }
+
+      .button:hover .button-arrow .icon {
+        transform: translate(1px, -1px);
+      }
+
+      .text-link:hover .icon {
+        transform: translateX(4px);
+      }
+
+      .preview-button:not(:disabled):hover {
+        background: #41513b;
+      }
+
+      .channel:not(:disabled):hover {
+        background: rgba(255, 255, 255, .7);
+      }
+
+      .doc-link:hover {
+        background: rgba(255, 255, 255, .72);
+        transform: translateY(-4px);
+      }
+    }
+
+    @media (max-width: 1100px) {
+      .hero {
+        gap: 29px;
+      }
+
+      .wallet {
+        padding: 17px;
+      }
+
+      .art-card,
+      .journey-card {
+        padding-inline: 15px;
+      }
+
+      .details-layout {
+        gap: 45px;
+      }
+    }
+
+    @media (max-width: 1000px) {
+      .hero {
+        grid-template-columns: 1fr;
+        gap: 45px;
+        padding-top: 65px;
+      }
+
+      .hero-copy {
+        max-width: 700px;
+        margin-inline: auto;
+        padding-bottom: 0;
+        text-align: center;
+      }
+
+      .hero-copy > .eyebrow,
+      .hero-actions,
+      .hero-footnote {
+        justify-content: center;
+      }
+
+      h1 {
+        max-width: none;
+        font-size: clamp(63px, 9.5vw, 94px);
+      }
+
+      .hero-description {
+        max-width: 445px;
+        margin-inline: auto;
+      }
+
+      .hero-footnote {
+        margin-top: 25px;
+      }
+
+      .experience {
+        width: min(620px, 100%);
+        margin-inline: auto;
+      }
+
+      .wallet {
+        padding: 23px;
+      }
+
+      .quiet-strip {
+        flex-direction: column;
+        gap: 13px;
+        text-align: center;
+      }
+
+      .section-heading {
+        align-items: flex-start;
+      }
+
+      .feature-copy {
+        padding: 25px;
+      }
+
+      .feature-copy h3 {
+        font-size: 29px;
+      }
+
+      .download-card {
+        padding: 39px;
+      }
+    }
+
+    @media (max-width: 740px) {
+      .shell {
+        width: calc(100% - 36px);
+      }
+
+      .nav-inner {
+        min-height: 73px;
+        gap: 12px;
+        flex-wrap: wrap;
+        padding-block: 10px;
+      }
+
+      .nav-download {
+        margin-left: auto;
+      }
+
+      .nav-links {
+        order: 4;
+        width: 100%;
+        justify-content: center;
+        gap: 23px;
+        margin: 0;
+      }
+
+      .has-js .nav-links {
+        position: absolute;
+        top: calc(100% + 9px);
+        left: 0;
+        right: 0;
+        display: none;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        width: auto;
+        padding: 10px;
+        border: 1px solid white;
+        border-radius: 20px;
+        background: #f4f5f0;
+        box-shadow: 0 20px 40px rgba(44, 52, 40, .12);
+      }
+
+      .has-js .nav-links a {
+        padding: 12px 15px;
+        border-radius: 11px;
+      }
+
+      .has-js .nav-links a:hover {
+        background: #e9eee2;
+      }
+
+      .has-js[data-menu-open="true"] .nav-links {
+        display: flex;
+      }
+
+      .has-js .menu-toggle {
+        display: inline-flex;
+      }
+
+      .hero {
+        padding-top: 47px;
+      }
+
+      .hero-description {
+        font-size: 14px;
+      }
+
+      .hero-actions {
+        gap: 17px;
+      }
+
+      .quiet-strip-items {
+        justify-content: center;
+        gap: 14px 22px;
+      }
+
+      .section {
+        padding-block: 66px;
+      }
+
+      .section-heading {
+        flex-direction: column;
+        gap: 21px;
+      }
+
+      .section-heading > p {
+        max-width: 420px;
+      }
+
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .feature-card {
+        min-height: 390px;
+      }
+
+      .feature-copy {
+        padding: 27px;
+      }
+
+      .feature-copy h3 {
+        max-width: 360px;
+        font-size: 32px;
+      }
+
+      .nearby-feature {
+        min-height: 415px;
+      }
+
+      .peer-scene {
+        margin-top: -1px;
+      }
+
+      .how-section {
+        padding-top: 0;
+      }
+
+      .steps {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        margin-top: 31px;
+      }
+
+      .step-top {
+        margin-bottom: 17px;
+      }
+
+      .step p {
+        max-width: 100%;
+      }
+
+      .details-layout {
+        grid-template-columns: 1fr;
+        gap: 35px;
+      }
+
+      .details-intro > p {
+        max-width: 440px;
+      }
+
+      .security-note {
+        max-width: 100%;
+        margin-top: 21px;
+      }
+
+      .docs-section,
+      .download-section {
+        padding-top: 0;
+      }
+
+      .doc-links {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .doc-link {
+        min-height: 86px;
+      }
+
+      .author {
+        align-items: flex-start;
+        gap: 16px;
+        margin-top: 35px;
+      }
+
+      .author-word {
+        display: none;
+      }
+
+      .author-monogram {
+        width: 54px;
+        height: 54px;
+        border-radius: 18px;
+        font-size: 22px;
+      }
+
+      .download-card {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 31px;
+      }
+
+      .download-visual {
+        min-height: 245px;
+        margin-top: 5px;
+      }
+
+      .download-visual::before {
+        width: 240px;
+        height: 240px;
+      }
+
+      .download-visual::after {
+        width: 320px;
+        height: 320px;
+      }
+
+      .app-icon {
+        width: 155px;
+        height: 155px;
+        border-radius: 39px;
+      }
+
+      .app-icon span {
+        font-size: 109px;
+      }
+
+      .site-footer {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 13px;
+      }
+
+      .footer-links {
+        gap: 17px;
+      }
+    }
+
+    @media (max-width: 560px) {
+      h1 {
+        font-size: clamp(53px, 11.4vw, 67px);
+      }
+
+      .hero-copy > .eyebrow {
+        font-size: 9px;
+        letter-spacing: .12em;
+      }
+
+      .hero-description {
+        max-width: 345px;
+      }
+
+      .experience-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-rows: auto auto;
+        gap: 11px;
+      }
+
+      .wallet {
+        grid-column: 1 / -1;
+        grid-row: 1;
+        padding: 24px;
+      }
+
+      .wallet-main {
+        min-height: 286px;
+      }
+
+      .wallet-landscape {
+        height: 92px;
+      }
+
+      .balance {
+        font-size: 49px;
+      }
+
+      .channel {
+        font-size: 9px;
+      }
+
+      .channel-note {
+        font-size: 10px;
+      }
+
+      .preview-button {
+        min-height: 51px;
+        font-size: 12px;
+      }
+
+      .preview-disclosure {
+        font-size: 10px;
+      }
+
+      .art-card {
+        grid-column: 1;
+        grid-row: 2;
+        min-height: 279px;
+        padding: 20px 14px 16px;
+      }
+
+      .journey-card {
+        grid-column: 2;
+        grid-row: 2;
+        min-height: 279px;
+        padding: 20px 14px;
+      }
+
+      .art-card h3,
+      .journey-card h3 {
+        font-size: 19px;
+      }
+
+      .sculpture {
+        height: 165px;
+        min-height: 145px;
+      }
+
+      .timeline {
+        gap: 15px;
+        margin-top: 22px;
+      }
+
+      .timeline-step {
+        gap: 7px;
+        font-size: 9px;
+      }
+
+      .timeline-index {
+        width: 22px;
+        height: 22px;
+      }
+
+      .journey-note {
+        margin-top: 17px;
+        font-size: 8px;
+      }
+
+      .preview-hint {
+        right: 13px;
+        font-size: 9px;
+      }
+    }
+
+    @media (max-width: 370px) {
+      .shell {
+        width: calc(100% - 28px);
+      }
+
+      .nav-inner {
+        gap: 8px;
+      }
+
+      .brand {
+        font-size: 23px;
+      }
+
+      .nav-download {
+        gap: 8px;
+        padding-left: 12px;
+        font-size: 11px;
+      }
+
+      .hero-actions {
+        gap: 9px 17px;
+      }
+
+      .hero-actions .button {
+        font-size: 12px;
+      }
+
+      .wallet {
+        padding: 20px;
+      }
+
+      .experience-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .art-card,
+      .journey-card {
+        grid-column: 1;
+        grid-row: auto;
+      }
+
+      .art-card {
+        min-height: 295px;
+      }
+
+      .sculpture {
+        min-height: 190px;
+      }
+
+      .journey-card {
+        min-height: 250px;
+      }
+
+      .journey-card h3 {
+        max-width: none;
+      }
+
+      .timeline {
+        gap: 15px;
+      }
+
+      .feature-copy,
+      .download-card {
+        padding: 24px;
+      }
+
+      .feature-copy h3 {
+        font-size: 29px;
+      }
+    }
+
+    body[data-motion="off"] *,
+    body[data-motion="off"] *::before,
+    body[data-motion="off"] *::after {
+      animation: none !important;
+      transition: none !important;
+      scroll-behavior: auto !important;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+      }
+
+      .reveal-enabled .reveal {
+        opacity: 1;
+        transform: none;
+      }
+
+      .button:hover,
+      .doc-link:hover {
+        transform: none;
+      }
+    }
+  </style>
+</head>
+
+<body id="top" data-menu-open="false">
+  <a href="#main" class="skip-link">Skip to content</a>
+  <div class="background" aria-hidden="true"></div>
+
+  <!-- Shared icons and original landscape illustration. -->
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="0"
+    height="0"
+    aria-hidden="true"
+    style="position:absolute;overflow:hidden"
+  >
+    <defs>
+      <linearGradient id="land-sky" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#e4dce9"/>
+        <stop offset=".48" stop-color="#f4d8cd"/>
+        <stop offset="1" stop-color="#e4eee1"/>
+      </linearGradient>
+
+      <linearGradient id="land-back" x1=".2" y1="0" x2=".8" y2="1">
+        <stop offset="0" stop-color="#f7e8c6"/>
+        <stop offset=".42" stop-color="#c3d4ad"/>
+        <stop offset="1" stop-color="#8ba793"/>
+      </linearGradient>
+
+      <linearGradient id="land-middle" x1=".4" y1="0" x2=".6" y2="1">
+        <stop offset="0" stop-color="#e5efc8"/>
+        <stop offset=".44" stop-color="#aec99b"/>
+        <stop offset="1" stop-color="#6f9c86"/>
+      </linearGradient>
+
+      <linearGradient id="land-front" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#eceac8"/>
+        <stop offset=".4" stop-color="#c3d7b5"/>
+        <stop offset="1" stop-color="#9bb3a6"/>
+      </linearGradient>
+
+      <radialGradient id="land-light">
+        <stop offset="0" stop-color="#fff9db" stop-opacity=".95"/>
+        <stop offset="1" stop-color="#fff9db" stop-opacity="0"/>
+      </radialGradient>
+
+      <filter id="land-soft">
+        <feGaussianBlur stdDeviation="11"/>
+      </filter>
+
+      <filter id="land-grain">
+        <feTurbulence
+          type="fractalNoise"
+          baseFrequency=".78"
+          numOctaves="3"
+          stitchTiles="stitch"
+          seed="7"
+        />
+      </filter>
+    </defs>
+
+    <symbol id="i-arrow" viewBox="0 0 24 24">
+      <path d="M6 18 18 6M6 6h12v12"/>
+    </symbol>
+
+    <symbol id="i-right" viewBox="0 0 24 24">
+      <path d="M4 12h16m-6-6 6 6-6 6"/>
+    </symbol>
+
+    <symbol id="i-check" viewBox="0 0 24 24">
+      <path d="m5 12 4.5 4.5L19 7"/>
+    </symbol>
+
+    <symbol id="i-wifi" viewBox="0 0 24 24">
+      <path d="M3 8a15 15 0 0 1 18 0M6 11a10 10 0 0 1 12 0M9 14a5 5 0 0 1 6 0"/>
+      <circle cx="12" cy="18" r=".7" fill="currentColor" stroke="none"/>
+    </symbol>
+
+    <symbol id="i-offline" viewBox="0 0 24 24">
+      <path d="m3 3 18 18M3 8a15 15 0 0 1 3-1.8M10 5.2A15 15 0 0 1 21 8M6 11a10 10 0 0 1 3-1.7M14 9.2a10 10 0 0 1 4 1.8M9 14a5 5 0 0 1 6 0"/>
+      <circle cx="12" cy="18" r=".7" fill="currentColor" stroke="none"/>
+    </symbol>
+
+    <symbol id="i-qr" viewBox="0 0 24 24">
+      <rect x="3" y="3" width="6" height="6" rx="1"/>
+      <rect x="15" y="3" width="6" height="6" rx="1"/>
+      <rect x="3" y="15" width="6" height="6" rx="1"/>
+      <path d="M15 15h3v3h3M15 21v-3M21 15v-3M12 3v3M3 12h3"/>
+    </symbol>
+
+    <symbol id="i-bluetooth" viewBox="0 0 24 24">
+      <path d="m7 7 10 10-5 4V3l5 4L7 17"/>
+    </symbol>
+
+    <symbol id="i-nfc" viewBox="0 0 24 24">
+      <path d="M5 5v14M9 7v10M13 5a11 11 0 0 1 0 14M17 3a15 15 0 0 1 0 18"/>
+    </symbol>
+
+    <symbol id="i-lock" viewBox="0 0 24 24">
+      <rect x="5" y="10" width="14" height="11" rx="3"/>
+      <path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/>
+    </symbol>
+
+    <symbol id="i-phone" viewBox="0 0 24 24">
+      <rect x="6" y="2" width="12" height="20" rx="3"/>
+      <path d="M10 5h4M10 19h4"/>
+    </symbol>
+
+    <symbol id="i-code" viewBox="0 0 24 24">
+      <path d="m8 6-6 6 6 6m8-12 6 6-6 6M14 3l-4 18"/>
+    </symbol>
+
+    <symbol id="i-book" viewBox="0 0 24 24">
+      <path d="M12 5C8 2 4 3 2 4v15c3-1.5 7-1.5 10 1 3-2.5 7-2.5 10-1V4c-2-1-6-2-10 1Zm0 0v15"/>
+    </symbol>
+
+    <symbol id="i-clock" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="9"/>
+      <path d="M12 7v5l3 2"/>
+    </symbol>
+
+    <symbol id="i-refresh" viewBox="0 0 24 24">
+      <path d="M20 7v5h-5M4 17v-5h5M6 6a8 8 0 0 1 13 2M5 16a8 8 0 0 0 13 2"/>
+    </symbol>
+
+    <symbol id="i-menu" viewBox="0 0 24 24">
+      <path d="M5 8h14M5 16h14"/>
+    </symbol>
+
+    <symbol id="landscape-art" viewBox="0 0 600 360">
+      <rect width="600" height="360" fill="url(#land-sky)"/>
+      <ellipse cx="180" cy="91" rx="200" ry="118" fill="url(#land-light)"/>
+
+      <path
+        d="M-60 268C34 245 73 228 142 231c64 3 99-107 169-100 55 5 54 108 125 121 80 14 120-88 218-56v204H-60Z"
+        fill="url(#land-back)"
+      />
+
+      <path
+        d="M23 329c79-95 152-52 224-139 29-35 31-66 59-68 39-3 23 94 112 124 74 25 130 33 220 113v64H23Z"
+        fill="url(#land-middle)"
+      />
+
+      <path
+        d="M274 186c16-24 22-61 34-62 10-1 15 29 20 50 11 40 28 60 59 73-60-20-77-47-87-75-4 1-12 6-26 14Z"
+        fill="#f0f4ce"
+        opacity=".58"
+        filter="url(#land-soft)"
+      />
+
+      <path
+        d="M-37 348c122-99 191-21 300-34 110-14 143-75 213-64 74 11 117 70 158 90v70H-37Z"
+        fill="url(#land-front)"
+      />
+
+      <path
+        d="M-16 315c82-42 133-24 188-7-68-9-119-1-180 33Z"
+        fill="#f4efda"
+        opacity=".54"
+        filter="url(#land-soft)"
+      />
+
+      <rect
+        width="600"
+        height="360"
+        filter="url(#land-grain)"
+        opacity=".04"
+      />
+    </symbol>
+  </svg>
+
+  <header class="site-header">
+    <div class="shell nav-inner">
+      <a class="brand" href="#top" aria-label="Paila home">
+        <span class="brand-orb" aria-hidden="true"></span>
+        paila
+      </a>
+
+      <nav id="siteNav" class="nav-links" aria-label="Main navigation">
+        <a href="#experience">Experience</a>
+        <a href="#features">The little details</a>
+        <a href="#how">How it works</a>
+        <a href="#security">Good to know</a>
+      </nav>
+
+      <a class="button nav-download" href="#download">
+        Get Paila
+        <span class="button-arrow" aria-hidden="true">
+          <svg class="icon"><use href="#i-arrow"/></svg>
+        </span>
+      </a>
+
+      <button
+        class="menu-toggle"
+        id="menuToggle"
+        type="button"
+        aria-label="Open navigation"
+        aria-controls="siteNav"
+        aria-expanded="false"
+      >
+        <svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <div class="shell">
+      <section class="hero" aria-labelledby="heroTitle">
+        <div class="hero-copy">
+          <p class="eyebrow">
+            <span class="status-dot" aria-hidden="true"></span>
+            A wallet for the in-between
+          </p>
+
+          <h1 id="heroTitle">
+            Life moves.
+            <span class="editorial">Even offline.</span>
+          </h1>
+
+          <p class="hero-description">
+            For connected days. And the moments in between.
+            Exchange a payment nearby, keep the receipt, and
+            settle when you’re back online.
+          </p>
+
+          <div class="hero-actions">
+            <a class="button" href="#download">
+              Meet your new wallet
+              <span class="button-arrow" aria-hidden="true">
+                <svg class="icon"><use href="#i-arrow"/></svg>
+              </span>
+            </a>
+
+            <a class="text-link" href="#experience">
+              Try the flow
+              <svg class="icon" aria-hidden="true"><use href="#i-right"/></svg>
+            </a>
+          </div>
+
+          <p class="hero-disclosure">
+            Android · Current build uses test credit only.
+          </p>
+
+          <p class="hero-footnote">
+            <span class="footnote-line" aria-hidden="true"></span>
+            Made for Nepal. A little less distance.
+          </p>
+        </div>
+
+        <figure
+          class="experience"
+          id="experience"
+          aria-label="Interactive Paila payment preview"
+          aria-describedby="previewCaption"
+        >
+          <div class="preview-hint">
+            <span class="status-dot" aria-hidden="true"></span>
+            A little less signal. Still a connection.
+          </div>
+
+          <div class="experience-grid">
+            <div class="wallet glass" id="wallet" data-phase="ready">
+              <div class="wallet-head">
+                <div class="mini-brand">
+                  <span class="brand-orb" aria-hidden="true"></span>
+                  paila
+                </div>
+
+                <button
+                  id="connectionToggle"
+                  class="connection-switch"
+                  type="button"
+                  role="switch"
+                  aria-checked="false"
+                  aria-label="Online connection in this preview"
+                  aria-describedby="previewCaption"
+                >
+                  <span id="connectionLabel">Offline</span>
+                  <span class="switch-track" aria-hidden="true"></span>
+                </button>
+              </div>
+
+              <div class="wallet-main">
+                <div id="readyView">
+                  <p class="balance-label">A little peace of mind.</p>
+
+                  <p class="balance">
+                    <small>Rs</small> 1,000<span class="sr-only"> test credit</span>
+                  </p>
+
+                  <p class="balance-note">Illustrative wallet balance · test credit</p>
+
+                  <svg
+                    class="wallet-landscape"
+                    viewBox="0 0 600 360"
+                    preserveAspectRatio="xMidYMid slice"
+                    aria-hidden="true"
+                  >
+                    <use href="#landscape-art"/>
+                  </svg>
+
+                  <div class="recipient">
+                    <div class="recipient-avatar" aria-hidden="true">h</div>
+                    <div>
+                      <p class="recipient-name">Himal Café</p>
+                      <p class="recipient-meta">Example recipient · nearby</p>
+                    </div>
+                    <svg class="icon" aria-hidden="true"><use href="#i-qr"/></svg>
+                  </div>
+
+                  <div class="send-summary">
+                    <span class="muted" id="amountContext">Reserved note</span>
+                    <strong>Rs 120</strong>
+                  </div>
+                </div>
+
+                <div class="result-view" id="resultView" hidden>
+                  <div class="result-symbol" aria-hidden="true">
+                    <svg class="icon"><use href="#i-check"/></svg>
+                  </div>
+                  <h2 class="result-title" id="resultTitle">Sent. Even offline.</h2>
+                  <p class="result-amount">Rs 120</p>
+                  <p class="result-copy" id="resultCopy">
+                    Offline exchange saved. Settlement is pending until sync.
+                  </p>
+                </div>
+              </div>
+
+              <div class="preview-controls">
+                <div
+                  class="channel-list"
+                  role="group"
+                  aria-label="Payment method in this preview"
+                >
+                  <button
+                    class="channel"
+                    data-channel="qr"
+                    type="button"
+                    aria-label="QR"
+                    aria-pressed="true"
+                  >
+                    <svg class="icon" aria-hidden="true"><use href="#i-qr"/></svg>
+                    <span>QR</span>
+                  </button>
+
+                  <button
+                    class="channel"
+                    data-channel="bluetooth"
+                    type="button"
+                    aria-label="Bluetooth"
+                    aria-pressed="false"
+                  >
+                    <svg class="icon" aria-hidden="true"><use href="#i-bluetooth"/></svg>
+                    <span>Bluetooth</span>
+                  </button>
+
+                  <button
+                    class="channel"
+                    data-channel="wifi"
+                    type="button"
+                    aria-label="Wi-Fi Direct"
+                    aria-pressed="false"
+                  >
+                    <svg class="icon" aria-hidden="true"><use href="#i-wifi"/></svg>
+                    <span>Wi-Fi</span>
+                  </button>
+
+                  <button
+                    class="channel"
+                    data-channel="nfc"
+                    type="button"
+                    aria-label="NFC, experimental"
+                    aria-pressed="false"
+                  >
+                    <svg class="icon" aria-hidden="true"><use href="#i-nfc"/></svg>
+                    <span>NFC</span>
+                  </button>
+                </div>
+
+                <p class="channel-note" id="channelNote">
+                  QR · Exchange a signed note with a nearby phone.
+                </p>
+
+                <button class="preview-button" id="previewButton" type="button">
+                  <span id="previewButtonLabel">Send Rs 120</span>
+                  <svg class="icon" aria-hidden="true">
+                    <use id="previewButtonIcon" href="#i-right"/>
+                  </svg>
+                </button>
+              </div>
+
+              <p class="preview-disclosure">
+                Interactive illustration. No real money moves.
+              </p>
+
+              <noscript>
+                <p class="preview-disclosure">
+                  Enable JavaScript to try the payment preview.
+                </p>
+              </noscript>
+            </div>
+
+            <div class="art-card glass">
+              <p class="eyebrow">Connection, reimagined</p>
+              <h3>Good things<br>stay close.</h3>
+
+              <div class="sculpture" id="sculpture" aria-hidden="true">
+                <svg
+                  class="sculpture-fallback"
+                  viewBox="0 0 320 320"
+                >
+                  <defs>
+                    <linearGradient id="fallback-material" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0" stop-color="#e2eaca"/>
+                      <stop offset=".35" stop-color="#bdd5c8"/>
+                      <stop offset=".68" stop-color="#d6bfdc"/>
+                      <stop offset="1" stop-color="#edbba4"/>
+                    </linearGradient>
+                    <filter id="fallback-shadow" x="-40%" y="-40%" width="180%" height="180%">
+                      <feDropShadow dx="5" dy="13" stdDeviation="8" flood-color="#83798c" flood-opacity=".2"/>
+                    </filter>
+                  </defs>
+
+                  <ellipse
+                    cx="160" cy="267" rx="68" ry="11"
+                    fill="#9b95a2" opacity=".12"
+                  />
+
+                  <g
+                    fill="none"
+                    stroke="url(#fallback-material)"
+                    stroke-width="34"
+                    stroke-linecap="round"
+                    filter="url(#fallback-shadow)"
+                    transform="rotate(-23 160 160)"
+                  >
+                    <path d="M159 80c-65-48-119 40-63 76 34 22 74-16 95 12 39 52 107-7 64-52-28-29-75 10-96-36Z"/>
+                    <path d="M106 151c-42 32-12 100 39 88 39-9 20-54 50-68"/>
+                  </g>
+                </svg>
+
+                <canvas id="sculptureCanvas" width="320" height="320"></canvas>
+              </div>
+
+              <p class="art-caption">A little less distance.</p>
+            </div>
+
+            <div class="journey-card glass">
+              <p class="eyebrow" id="journeyEyebrow">The payment journey</p>
+              <h3 id="journeyTitle">Nearby.<br>Not far away.</h3>
+
+              <ol class="timeline" aria-label="Payment progress">
+                <li class="timeline-step done" id="stepPrepare">
+                  <span class="timeline-index" aria-hidden="true">1</span>
+                  <span>Note prepared</span>
+                </li>
+                <li class="timeline-step" id="stepExchange">
+                  <span class="timeline-index" aria-hidden="true">2</span>
+                  <span>Exchange saved</span>
+                </li>
+                <li class="timeline-step" id="stepSettle">
+                  <span class="timeline-index" aria-hidden="true">3</span>
+                  <span>Settled on sync</span>
+                </li>
+              </ol>
+
+              <p class="journey-note" id="journeyNote">
+                Try sending a note. The preview starts without a connection.
+              </p>
+            </div>
+          </div>
+
+          <figcaption class="experience-caption" id="previewCaption">
+            Product preview · The switch simulates connectivity, not your device’s network.
+          </figcaption>
+
+          <p class="sr-only" id="flowLive" role="status" aria-live="polite" aria-atomic="true"></p>
+        </figure>
+      </section>
+
+      <div class="quiet-strip">
+        <p>Less friction. More everyday life.</p>
+        <div class="quiet-strip-items">
+          <span>
+            <svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>
+            Built for Android
+          </span>
+          <span>
+            <svg class="icon" aria-hidden="true"><use href="#i-bluetooth"/></svg>
+            Phone to phone
+          </span>
+          <span>
+            <svg class="icon" aria-hidden="true"><use href="#i-code"/></svg>
+            Source on GitHub
+          </span>
+        </div>
+      </div>
+
+      <section class="section" id="features" aria-labelledby="featuresTitle">
+        <div class="section-heading reveal">
+          <div>
+            <p class="eyebrow">Made for real moments</p>
+            <h2 id="featuresTitle">
+              A small wallet.<br>A little more freedom.
+            </h2>
+          </div>
+          <p>
+            The café around the corner. A friend down the road.
+            Not every connection needs a network.
+          </p>
+        </div>
+
+        <div class="feature-grid">
+          <article class="feature-card landscape-feature reveal">
+            <svg
+              class="feature-landscape"
+              viewBox="0 0 600 360"
+              preserveAspectRatio="xMidYMax slice"
+              role="img"
+              aria-labelledby="landscapeTitle"
+            >
+              <title id="landscapeTitle">
+                Original pastel landscape with softly sculpted green hills
+              </title>
+              <use href="#landscape-art"/>
+            </svg>
+
+            <div class="feature-copy">
+              <p class="eyebrow">The offline pocket</p>
+              <h3>A little ready.<br>For a little further.</h3>
+              <p>
+                Set aside a payment note while connected.
+                Take it with you when your signal stays behind.
+              </p>
+            </div>
+
+            <div class="landscape-label">
+              <svg class="icon" aria-hidden="true"><use href="#i-offline"/></svg>
+              Less signal. More possibility.
+            </div>
+          </article>
+
+          <article class="feature-card nearby-feature reveal">
+            <div class="feature-copy">
+              <p class="eyebrow">Nearby exchange</p>
+              <h3>Closer is<br>all you need.</h3>
+              <p>
+                QR, Bluetooth, or Wi-Fi Direct.
+                A signed exchange between compatible phones,
+                without mobile data.
+              </p>
+            </div>
+
+            <div class="peer-scene" aria-hidden="true">
+              <div class="tiny-phone left">
+                <span class="phone-label">Your note</span>
+                <strong>Rs 120</strong>
+                <span class="phone-check">
+                  <svg class="icon"><use href="#i-right"/></svg>
+                </span>
+                <span class="phone-label">Ready to send</span>
+                <span class="phone-bottom"></span>
+              </div>
+
+              <div class="connection-beacon">
+                <svg class="icon"><use href="#i-bluetooth"/></svg>
+              </div>
+
+              <div class="tiny-phone right">
+                <span class="phone-label">A nearby phone</span>
+                <strong>Received</strong>
+                <span class="phone-check">
+                  <svg class="icon"><use href="#i-check"/></svg>
+                </span>
+                <span class="phone-label">Pending sync</span>
+                <span class="phone-bottom"></span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section how-section" id="how" aria-labelledby="howTitle">
+        <div class="section-heading reveal">
+          <div>
+            <p class="eyebrow">From here to there</p>
+            <h2 id="howTitle">Three small steps.<br>One less thing in the way.</h2>
+          </div>
+          <a class="text-link" href="#experience">
+            Feel the flow
+            <svg class="icon" aria-hidden="true"><use href="#i-right"/></svg>
+          </a>
+        </div>
+
+        <div class="steps">
+          <article class="step reveal">
+            <div class="step-top">
+              <span class="step-number">01</span>
+              <span class="step-tag">Before you head out</span>
+            </div>
+            <h3>Set a little aside.</h3>
+            <p>
+              While online, reserve an exact-amount note for your offline
+              pocket. The current build supports notes up to Rs 500 in
+              test credit, with a 24-hour expiry.
+            </p>
+          </article>
+
+          <article class="step reveal">
+            <div class="step-top">
+              <span class="step-number">02</span>
+              <span class="step-tag">In the moment</span>
+            </div>
+            <h3>Meet phone to phone.</h3>
+            <p>
+              Review the recipient and amount, then exchange nearby.
+              Use QR, Bluetooth, or Wi-Fi Direct. Experimental NFC uses
+              a two-tap flow on supported phones.
+            </p>
+          </article>
+
+          <article class="step reveal">
+            <div class="step-top">
+              <span class="step-number">03</span>
+              <span class="step-tag">Back in range</span>
+            </div>
+            <h3>Reconnect. Catch up.</h3>
+            <p>
+              Your offline receipt stays pending until sync.
+              When you reconnect, the server settles the first valid
+              redemption—once, not again on every retry.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section details-section" id="security" aria-labelledby="detailsTitle">
+        <div class="details-layout">
+          <div class="details-intro reveal">
+            <p class="eyebrow">Thoughtfully built</p>
+            <h2 id="detailsTitle">Good design.<br>Clear boundaries.</h2>
+            <p>
+              A calmer experience doesn’t mean hiding the important things.
+              Here’s what Paila does—and where the current build draws the line.
+            </p>
+
+            <a
+              class="text-link"
+              href="https://github.com/limitlessneverdies/paila-app/blob/main/docs/SECURITY.md"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Read the security model
+              <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg>
+            </a>
+
+            <div class="security-note">
+              <svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg>
+              <span>
+                Device-held signing keys.<br>
+                Encrypted local storage.
+              </span>
+            </div>
+          </div>
+
+          <div class="faqs reveal">
+            <details class="faq">
+              <summary>Does Paila move real money?</summary>
+              <div class="faq-answer">
+                <p>
+                  <strong>Not in the current release.</strong>
+                  Paila uses test credit only—not real NPR, a bank balance,
+                  or redeemable funds. There is no cash-out, and the server
+                  refuses real-money mode.
+                </p>
+                <p>
+                  The website preview is an illustration. It does not connect
+                  to a wallet, create a real transaction, or move any funds.
+                </p>
+              </div>
+            </details>
+
+            <details class="faq">
+              <summary>Is an offline receipt already settled?</summary>
+              <div class="faq-answer">
+                <p>
+                  <strong>No. An offline exchange and settlement are different steps.</strong>
+                  The signed exchange is stored locally. Settlement happens
+                  after reconnecting, when the server accepts the first valid
+                  redemption.
+                </p>
+                <p>
+                  Offline double-spending is not fully solved: a compromised
+                  phone could sign the same note twice. Only the first valid
+                  redemption settles. Don’t treat a pending receipt as a
+                  guaranteed payment.
+                </p>
+              </div>
+            </details>
+
+            <details class="faq">
+              <summary>Which nearby methods can I use?</summary>
+              <div class="faq-answer">
+                <p>
+                  Paila supports QR exchange, Bluetooth, and Wi-Fi Direct
+                  on compatible Android devices. Hardware, operating system
+                  support, and permissions can affect availability.
+                </p>
+                <p>
+                  <strong>NFC is experimental.</strong>
+                  It uses a two-tap exchange between supported HCE-capable
+                  phones, rather than promising universal tap-to-pay.
+                </p>
+              </div>
+            </details>
+
+            <details class="faq">
+              <summary>What protects the wallet—and can I recover it?</summary>
+              <div class="faq-answer">
+                <p>
+                  Signing keys use ECDSA P-256 in the Android Keystore,
+                  and local storage is encrypted with AES-GCM.
+                  Issuer keys stay on the server.
+                </p>
+                <p>
+                  <strong>There is currently no account recovery.</strong>
+                  Uninstalling loses the test wallet. APK obfuscation is not
+                  an impenetrable security boundary, and this build must
+                  never be used with real funds.
+                </p>
+              </div>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <section class="section docs-section" id="docs" aria-labelledby="docsTitle">
+        <div class="docs-heading reveal">
+          <h2 id="docsTitle">Nothing behind the curtain.</h2>
+        </div>
+
+        <div class="doc-links">
+          <a
+            class="doc-link glass reveal"
+            href="https://github.com/limitlessneverdies/paila-app/blob/main/START_HERE.md"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <svg class="icon" aria-hidden="true"><use href="#i-book"/></svg>
+            <span>
+              <span class="doc-title">Start here</span>
+              <span class="doc-description">Run it. Build it. Make it yours.</span>
+            </span>
+            <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg>
+          </a>
+
+          <a
+            class="doc-link glass reveal"
+            href="https://github.com/limitlessneverdies/paila-app/blob/main/docs/SECURITY.md"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg>
+            <span>
+              <span class="doc-title">Security model</span>
+              <span class="doc-description">The decisions and the limits.</span>
+            </span>
+            <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg>
+          </a>
+
+          <a
+            class="doc-link glass reveal"
+            href="https://github.com/limitlessneverdies/paila-app/blob/main/qa/TEST_REPORT.md"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <svg class="icon" aria-hidden="true"><use href="#i-code"/></svg>
+            <span>
+              <span class="doc-title">Build report</span>
+              <span class="doc-description">What was checked. What remains.</span>
+            </span>
+            <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg>
+          </a>
+        </div>
+
+        <div class="author reveal" id="author">
+          <div class="author-monogram" aria-hidden="true">B.</div>
+          <div class="author-copy">
+            <h3>A personal project by Bishowdeep Bhusal.</h3>
+            <p>
+              Built around a simple idea: distance shouldn’t decide who
+              gets to participate. The Android app, ledger, and design
+              are parts of the same journey—one small step at a time.
+            </p>
+          </div>
+          <span class="author-word" lang="ne" aria-label="Paila in Nepali">पाइला</span>
+        </div>
+      </section>
+
+      <section class="section download-section" id="download" aria-labelledby="downloadTitle">
+        <div class="download-card reveal">
+          <div class="download-copy">
+            <p class="eyebrow">
+              <span class="status-dot" aria-hidden="true"></span>
+              Take the next small step
+            </p>
+
+            <h2 id="downloadTitle">Less distance.<br>More possibility.</h2>
+
+            <a
+              class="button"
+              href="https://github.com/limitlessneverdies/paila-app/releases/latest"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Get Paila for Android
+              <span class="button-arrow" aria-hidden="true">
+                <svg class="icon"><use href="#i-arrow"/></svg>
+              </span>
+            </a>
+
+            <p class="download-fineprint">
+              APK via GitHub · Current release uses test credit only.
+              No real money, bank connection, or cash-out.
+              Keep Play Protect on.
+            </p>
+          </div>
+
+          <div class="download-visual" aria-hidden="true">
+            <div class="app-icon"><span>p.</span></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="shell site-footer">
+    <div class="footer-left">
+      <a class="brand" href="#top" aria-label="Paila home">
+        <span class="brand-orb" aria-hidden="true"></span>
+        paila
+      </a>
+      <span>A little less distance. © <span id="year">2026</span></span>
+    </div>
+
+    <div class="footer-links">
+      <a href="#author">By Bishowdeep</a>
+      <a
+        href="https://github.com/limitlessneverdies/paila-app"
+        target="_blank"
+        rel="noopener noreferrer"
+      >GitHub ↗</a>
+      <button
+        class="motion-toggle"
+        id="motionToggle"
+        type="button"
+        role="switch"
+        aria-label="Decorative motion"
+        aria-checked="true"
+        hidden
+      >
+        Motion on
+      </button>
+    </div>
+  </footer>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const $ = (id) => document.getElementById(id);
+      const body = document.body;
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+      let manualMotionPause = false;
+      let scene = null;
+      let revealObserver = null;
+
+      /* --------------------------------------------
+         Payment preview
+         Pure state transitions. No actual payments.
+      --------------------------------------------- */
+
+      const CHANNELS = ["qr", "bluetooth", "wifi", "nfc"];
+
+      const channelDescriptions = {
+        qr: "QR · Exchange a signed note with a nearby phone.",
+        bluetooth: "Bluetooth · A nearby, paired phone-to-phone exchange.",
+        wifi: "Wi-Fi Direct · Nearby transfer, without a router or mobile data.",
+        nfc: "NFC · Experimental two-tap flow on supported Android phones."
+      };
+
+      const freshState = () => ({
+        online: false,
+        phase: "ready",
+        channel: "qr"
+      });
+
+      function reduce(state, action) {
+        switch (action.type) {
+          case "RESET":
+            return freshState();
+
+          case "MODE":
+            return state.phase === "ready"
+              ? { ...state, online: Boolean(action.online), channel: "qr" }
+              : state;
+
+          case "CHANNEL":
+            return (
+              state.phase === "ready" &&
+              CHANNELS.includes(action.channel) &&
+              (!state.online || action.channel === "qr")
+            )
+              ? { ...state, channel: action.channel }
+              : state;
+
+          case "SEND":
+            return state.phase === "ready"
+              ? { ...state, phase: "sending" }
+              : state;
+
+          case "EXCHANGED":
+            return state.phase === "sending"
+              ? {
+                  ...state,
+                  phase: state.online ? "settled" : "queued"
+                }
+              : state;
+
+          case "SYNC":
+            return state.phase === "queued"
+              ? { ...state, online: true, phase: "syncing" }
+              : state;
+
+          case "SYNCED":
+            return state.phase === "syncing"
+              ? { ...state, phase: "settled" }
+              : state;
+
+          default:
+            return state;
+        }
+      }
+
+      let state = freshState();
+      let timer = null;
+      let epoch = 0;
+      let lastAnnouncedPhase = "";
+
+      const channelButtons = Array.from(
+        document.querySelectorAll("[data-channel]")
+      );
+
+      function dispatch(action) {
+        const next = reduce(state, action);
+        if (next === state) return;
+
+        if (timer !== null) {
+          window.clearTimeout(timer);
+          timer = null;
+        }
+
+        const generation = ++epoch;
+        state = next;
+        renderPayment();
+
+        if (state.phase === "sending" || state.phase === "syncing") {
+          const done = state.phase === "sending" ? "EXCHANGED" : "SYNCED";
+
+          timer = window.setTimeout(() => {
+            if (generation === epoch) {
+              dispatch({ type: done });
+            }
+          }, reducedMotion.matches ? 200 : 1050);
+        }
+      }
+
+      function renderPayment() {
+        const phase = state.phase;
+        const busy = phase === "sending" || phase === "syncing";
+        const isReceipt = ["queued", "syncing", "settled"].includes(phase);
+
+        $("wallet").dataset.phase = phase;
+        $("wallet").setAttribute("aria-busy", String(busy));
+
+        $("readyView").hidden = isReceipt;
+        $("resultView").hidden = !isReceipt;
+
+        $("connectionToggle").setAttribute("aria-checked", String(state.online));
+        $("connectionToggle").disabled = phase !== "ready";
+        $("connectionLabel").textContent = state.online ? "Online" : "Offline";
+
+        $("amountContext").textContent = state.online
+          ? "Preview payment"
+          : "Reserved note";
+
+        channelButtons.forEach((button) => {
+          const selected = button.dataset.channel === state.channel;
+          button.setAttribute("aria-pressed", String(selected));
+          button.disabled =
+            phase !== "ready" ||
+            (state.online && button.dataset.channel !== "qr");
+        });
+
+        const copy = {
+          ready: {
+            button: "Send Rs 120",
+            icon: "#i-right",
+            eyebrow: "The payment journey",
+            title: "Nearby. Not far away.",
+            note: state.online
+              ? "Online mode illustrates settlement with the server."
+              : "Try sending a note. The preview starts without a connection.",
+            channel: state.online
+              ? "Online QR · This preview settles directly with the server."
+              : channelDescriptions[state.channel],
+            live: state.online
+              ? "Online preview ready. Rs 120 test credit. No real funds will move."
+              : "Offline preview ready. Rs 120 test credit. No real funds will move."
+          },
+
+          sending: {
+            button: state.online ? "Confirming payment…" : "Signing receipt…",
+            icon: "#i-refresh",
+            eyebrow: "On its way",
+            title: "One small exchange.",
+            note: "Illustrating the signed hand-off. No payment request is sent.",
+            channel: state.online
+              ? "Illustrating an online confirmation."
+              : "Illustrating a signed exchange between nearby phones.",
+            live: "Preview in progress. No actual payment is being made."
+          },
+
+          queued: {
+            button: "Reconnect & sync",
+            icon: "#i-refresh",
+            eyebrow: "Offline exchange saved",
+            title: "Saved. Even here.",
+            note: "The receipt is saved. Settlement is still pending.",
+            channel: "Exchange complete in this preview. Reconnect to illustrate settlement.",
+            resultTitle: "Sent. Even offline.",
+            resultCopy: "Offline exchange saved. Settlement is pending until you reconnect and sync.",
+            live: "Offline exchange saved in the preview. The payment is not yet settled."
+          },
+
+          syncing: {
+            button: "Syncing the receipt…",
+            icon: "#i-refresh",
+            eyebrow: "Back in range",
+            title: "Catching up.",
+            note: "Illustrating the first valid redemption being accepted.",
+            channel: "Connection restored in the preview. Completing settlement.",
+            resultTitle: "Back in sync.",
+            resultCopy: "Your saved receipt is being reconciled in this illustration.",
+            live: "Connection restored in the preview. Settlement is in progress."
+          },
+
+          settled: {
+            button: "Replay the flow",
+            icon: "#i-refresh",
+            eyebrow: "Preview settled",
+            title: "All caught up.",
+            note: "One accepted redemption. A clear end to the journey.",
+            channel: "Preview complete. Replay starts again in offline mode.",
+            resultTitle: "Payment successful.",
+            resultCopy: "Preview settlement complete. Rs 120 test credit. No real funds moved.",
+            live: "Preview payment successful. Settlement is complete. No real funds moved."
+          }
+        }[phase];
+
+        $("previewButton").disabled = busy;
+        $("previewButtonLabel").textContent = copy.button;
+        $("previewButtonIcon").setAttribute("href", copy.icon);
+
+        $("journeyEyebrow").textContent = copy.eyebrow;
+        $("journeyTitle").textContent = copy.title;
+        $("journeyNote").textContent = copy.note;
+        $("channelNote").textContent = copy.channel;
+
+        if (isReceipt) {
+          $("resultTitle").textContent = copy.resultTitle;
+          $("resultCopy").textContent = copy.resultCopy;
+        }
+
+        $("stepExchange").classList.toggle("done", isReceipt);
+        $("stepSettle").classList.toggle("done", phase === "settled");
+        $("stepSettle").classList.toggle(
+          "waiting",
+          phase === "queued" || phase === "syncing"
+        );
+
+        if (lastAnnouncedPhase !== phase) {
+          $("flowLive").textContent = copy.live;
+          lastAnnouncedPhase = phase;
+        }
+      }
+
+      $("previewButton").addEventListener("click", () => {
+        if (state.phase === "ready") dispatch({ type: "SEND" });
+        else if (state.phase === "queued") dispatch({ type: "SYNC" });
+        else if (state.phase === "settled") dispatch({ type: "RESET" });
+      });
+
+      $("connectionToggle").addEventListener("click", () => {
+        dispatch({ type: "MODE", online: !state.online });
+      });
+
+      channelButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          dispatch({
+            type: "CHANNEL",
+            channel: button.dataset.channel
+          });
+        });
+      });
+
+      renderPayment();
+
+      /* --------------------------------------------
+         Mobile navigation
+      --------------------------------------------- */
+
+      const menuToggle = $("menuToggle");
+      const siteNav = $("siteNav");
+
+      function setMenu(open, restoreFocus = false) {
+        body.dataset.menuOpen = String(open);
+        menuToggle.setAttribute("aria-expanded", String(open));
+        menuToggle.setAttribute(
+          "aria-label",
+          open ? "Close navigation" : "Open navigation"
+        );
+
+        if (restoreFocus) menuToggle.focus();
+      }
+
+      menuToggle.addEventListener("click", () => {
+        setMenu(menuToggle.getAttribute("aria-expanded") !== "true");
+      });
+
+      siteNav.querySelectorAll("a").forEach((link) => {
+        link.addEventListener("click", () => setMenu(false));
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && body.dataset.menuOpen === "true") {
+          setMenu(false, true);
+        }
+      });
+
+      document.addEventListener("pointerdown", (event) => {
+        if (
+          body.dataset.menuOpen === "true" &&
+          !siteNav.contains(event.target) &&
+          !menuToggle.contains(event.target)
+        ) {
+          setMenu(false);
+        }
+      });
+
+      window.addEventListener("resize", () => {
+        if (window.innerWidth > 740) setMenu(false);
+      }, { passive: true });
+
+      body.classList.add("has-js");
+      $("year").textContent = String(new Date().getFullYear());
+
+      /* --------------------------------------------
+         Motion preferences and progressive reveals
+      --------------------------------------------- */
+
+      const motionEnabled = () => (
+        !reducedMotion.matches && !manualMotionPause
+      );
+
+      function applyMotion() {
+        const enabled = motionEnabled();
+        body.dataset.motion = enabled ? "on" : "off";
+
+        const button = $("motionToggle");
+        button.hidden = false;
+        button.disabled = reducedMotion.matches;
+        button.setAttribute("aria-checked", String(enabled));
+        button.textContent = reducedMotion.matches
+          ? "Reduced motion"
+          : enabled ? "Motion on" : "Motion off";
+
+        button.title = reducedMotion.matches
+          ? "Your device has requested reduced motion."
+          : "Pause or resume decorative animations.";
+
+        if (!enabled) {
+          document.documentElement.classList.remove("reveal-enabled");
+          if (revealObserver) revealObserver.disconnect();
+        }
+
+        if (scene) scene.refresh();
+      }
+
+      $("motionToggle").addEventListener("click", () => {
+        manualMotionPause = !manualMotionPause;
+        applyMotion();
+      });
+
+      if (reducedMotion.addEventListener) {
+        reducedMotion.addEventListener("change", applyMotion);
+      } else if (reducedMotion.addListener) {
+        reducedMotion.addListener(applyMotion);
+      }
+
+      applyMotion();
+
+      function initReveals() {
+        if (!motionEnabled() || !("IntersectionObserver" in window)) return;
+
+        try {
+          revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("is-visible");
+                revealObserver.unobserve(entry.target);
+              }
+            });
+          }, {
+            threshold: 0.08,
+            rootMargin: "0px 0px -24px 0px"
+          });
+
+          document.querySelectorAll(".reveal").forEach((element) => {
+            revealObserver.observe(element);
+          });
+
+          document.documentElement.classList.add("reveal-enabled");
+        } catch (_) {
+          document.documentElement.classList.remove("reveal-enabled");
+        }
+      }
+
+      initReveals();
+
+      /* --------------------------------------------
+         Real 3D artwork, without a framework
+         Parametric torus-knot mesh + WebGL shading.
+
+         - Static SVG fallback
+         - DPR cap
+         - Pauses offscreen / in background tabs
+         - Obeys global and OS reduced-motion settings
+         - Never blocks the payment preview
+      --------------------------------------------- */
+
+      function createSculpture() {
+        const host = $("sculpture");
+        const canvas = $("sculptureCanvas");
+
+        const gl = canvas.getContext("webgl", {
+          alpha: true,
+          antialias: true,
+          depth: true,
+          powerPreference: "low-power",
+          preserveDrawingBuffer: false
+        });
+
+        if (!gl) return null;
+
+        const vertexSource = `
+          attribute vec3 aPosition;
+          attribute vec3 aNormal;
+
+          uniform float uYaw;
+          uniform float uPitch;
+          uniform float uAspect;
+
+          varying vec3 vPosition;
+          varying vec3 vNormal;
+
+          void main() {
+            float cy = cos(uYaw);
+            float sy = sin(uYaw);
+            float cx = cos(uPitch);
+            float sx = sin(uPitch);
+
+            mat3 ry = mat3(
+              cy, 0.0, -sy,
+              0.0, 1.0, 0.0,
+              sy, 0.0, cy
+            );
+
+            mat3 rx = mat3(
+              1.0, 0.0, 0.0,
+              0.0, cx, sx,
+              0.0, -sx, cx
+            );
+
+            mat3 model = rx * ry;
+
+            vec3 world = model * aPosition;
+            vPosition = world;
+            vNormal = normalize(model * aNormal);
+
+            vec3 camera = world + vec3(0.0, 0.0, -5.8);
+
+            float nearPlane = 0.5;
+            float farPlane = 20.0;
+            float lens = 2.45 * min(uAspect, 1.0);
+
+            gl_Position = vec4(
+              camera.x * lens / uAspect,
+              camera.y * lens,
+              -((farPlane + nearPlane) / (farPlane - nearPlane)) * camera.z
+                - (2.0 * farPlane * nearPlane) / (farPlane - nearPlane),
+              -camera.z
+            );
+          }
+        `;
+
+        const fragmentSource = `
+          precision mediump float;
+
+          varying vec3 vPosition;
+          varying vec3 vNormal;
+
+          void main() {
+            vec3 n = normalize(vNormal);
+            vec3 view = normalize(vec3(0.0, 0.0, 5.8) - vPosition);
+            vec3 light = normalize(vec3(-3.0, 4.0, 5.0));
+            vec3 fillLight = normalize(vec3(3.0, -1.0, 2.0));
+
+            float diffuse = max(dot(n, light), 0.0);
+            float fill = max(dot(n, fillLight), 0.0);
+
+            vec3 mint = vec3(0.69, 0.81, 0.72);
+            vec3 peach = vec3(0.92, 0.70, 0.59);
+            vec3 lilac = vec3(0.77, 0.69, 0.84);
+
+            float band = smoothstep(-1.2, 1.3, vPosition.y);
+            vec3 base = mix(mint, peach, band);
+
+            float reflection = smoothstep(-0.8, 0.8, n.x);
+            base = mix(base, lilac, reflection * 0.48);
+
+            vec3 halfVector = normalize(light + view);
+            float specular = pow(max(dot(n, halfVector), 0.0), 40.0);
+            float fresnel = pow(1.0 - max(dot(n, view), 0.0), 2.5);
+
+            vec3 color = base * (0.61 + diffuse * 0.43 + fill * 0.15);
+            color += vec3(1.0, 0.97, 0.89) * specular * 0.58;
+            color += vec3(0.23, 0.19, 0.25) * fresnel;
+            color = mix(color, vec3(0.96, 0.96, 0.90), fresnel * 0.14);
+
+            gl_FragColor = vec4(clamp(color, 0.0, 1.0), 1.0);
+          }
+        `;
+
+        function compile(type, source) {
+          const shader = gl.createShader(type);
+          if (!shader) throw new Error("Could not create shader.");
+
+          gl.shaderSource(shader, source);
+          gl.compileShader(shader);
+
+          if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+            const message = gl.getShaderInfoLog(shader);
+            gl.deleteShader(shader);
+            throw new Error(message || "Shader compilation failed.");
+          }
+
+          return shader;
+        }
+
+        const vertexShader = compile(gl.VERTEX_SHADER, vertexSource);
+        const fragmentShader = compile(gl.FRAGMENT_SHADER, fragmentSource);
+        const program = gl.createProgram();
+
+        if (!program) throw new Error("Could not create WebGL program.");
+
+        gl.attachShader(program, vertexShader);
+        gl.attachShader(program, fragmentShader);
+        gl.linkProgram(program);
+
+        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+          throw new Error(gl.getProgramInfoLog(program) || "Program linking failed.");
+        }
+
+        gl.deleteShader(vertexShader);
+        gl.deleteShader(fragmentShader);
+        gl.useProgram(program);
+
+        const normalize = (v) => {
+          const length = Math.hypot(v[0], v[1], v[2]) || 1;
+          return v.map((value) => value / length);
+        };
+
+        const cross = (a, b) => [
+          a[1] * b[2] - a[2] * b[1],
+          a[2] * b[0] - a[0] * b[2],
+          a[0] * b[1] - a[1] * b[0]
+        ];
+
+        const point = (u) => {
+          const radius = 2 + .62 * Math.cos(3 * u);
+          return [
+            radius * Math.cos(2 * u) * .6,
+            radius * Math.sin(2 * u) * .6,
+            Math.sin(3 * u) * .6
+          ];
+        };
+
+        const rings = 128;
+        const sides = 20;
+        const tubeRadius = .285;
+        const positions = [];
+        const normals = [];
+        const indices = [];
+
+        for (let i = 0; i <= rings; i++) {
+          const u = i / rings * Math.PI * 2;
+          const center = point(u);
+          const before = point(u - .001);
+          const after = point(u + .001);
+
+          const tangent = normalize([
+            after[0] - before[0],
+            after[1] - before[1],
+            after[2] - before[2]
+          ]);
+
+          const binormal = normalize(cross(tangent, [0, 0, 1]));
+          const normal = normalize(cross(binormal, tangent));
+
+          for (let j = 0; j <= sides; j++) {
+            const v = j / sides * Math.PI * 2;
+            const cv = Math.cos(v);
+            const sv = Math.sin(v);
+
+            const n = [
+              normal[0] * cv + binormal[0] * sv,
+              normal[1] * cv + binormal[1] * sv,
+              normal[2] * cv + binormal[2] * sv
+            ];
+
+            positions.push(
+              center[0] + tubeRadius * n[0],
+              center[1] + tubeRadius * n[1],
+              center[2] + tubeRadius * n[2]
+            );
+
+            normals.push(n[0], n[1], n[2]);
+
+            if (i < rings && j < sides) {
+              const a = i * (sides + 1) + j;
+              const b = a + sides + 1;
+
+              // Outward-facing triangle winding.
+              indices.push(a, a + 1, b, a + 1, b + 1, b);
+            }
+          }
+        }
+
+        function bindAttribute(name, values) {
+          const buffer = gl.createBuffer();
+          gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+          gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array(values),
+            gl.STATIC_DRAW
+          );
+
+          const location = gl.getAttribLocation(program, name);
+          if (location < 0) throw new Error("Missing vertex attribute.");
+
+          gl.enableVertexAttribArray(location);
+          gl.vertexAttribPointer(location, 3, gl.FLOAT, false, 0, 0);
+        }
+
+        bindAttribute("aPosition", positions);
+        bindAttribute("aNormal", normals);
+
+        const indexBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+        gl.bufferData(
+          gl.ELEMENT_ARRAY_BUFFER,
+          new Uint16Array(indices),
+          gl.STATIC_DRAW
+        );
+
+        const uniforms = {
+          yaw: gl.getUniformLocation(program, "uYaw"),
+          pitch: gl.getUniformLocation(program, "uPitch"),
+          aspect: gl.getUniformLocation(program, "uAspect")
+        };
+
+        gl.enable(gl.DEPTH_TEST);
+        gl.enable(gl.CULL_FACE);
+        gl.cullFace(gl.BACK);
+        gl.clearColor(0, 0, 0, 0);
+
+        let raf = 0;
+        let elapsed = 0;
+        let lastTime = 0;
+        let visible = true;
+        let dead = false;
+        let aspect = 1;
+
+        let targetX = 0;
+        let targetY = 0;
+        let pointerX = 0;
+        let pointerY = 0;
+
+        function draw() {
+          if (dead) return;
+
+          gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+          gl.useProgram(program);
+
+          gl.uniform1f(uniforms.yaw, .35 + elapsed * .17 + pointerX * .28);
+          gl.uniform1f(uniforms.pitch, .6 + pointerY * .2);
+          gl.uniform1f(uniforms.aspect, aspect);
+
+          gl.drawElements(
+            gl.TRIANGLES,
+            indices.length,
+            gl.UNSIGNED_SHORT,
+            0
+          );
+
+          host.classList.add("ready");
+        }
+
+        function resize() {
+          if (dead) return;
+
+          const rect = host.getBoundingClientRect();
+          if (rect.width <= 0 || rect.height <= 0) return;
+
+          const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+          const width = Math.max(1, Math.round(rect.width * dpr));
+          const height = Math.max(1, Math.round(rect.height * dpr));
+
+          if (canvas.width !== width || canvas.height !== height) {
+            canvas.width = width;
+            canvas.height = height;
+          }
+
+          aspect = width / height;
+          gl.viewport(0, 0, width, height);
+          draw();
+        }
+
+        function shouldAnimate() {
+          return (
+            !dead &&
+            visible &&
+            !document.hidden &&
+            motionEnabled()
+          );
+        }
+
+        function frame(now) {
+          raf = 0;
+
+          if (!shouldAnimate()) {
+            lastTime = 0;
+            return;
+          }
+
+          if (lastTime) {
+            elapsed += Math.min((now - lastTime) / 1000, .05);
+          }
+
+          lastTime = now;
+          pointerX += (targetX - pointerX) * .06;
+          pointerY += (targetY - pointerY) * .06;
+
+          draw();
+          raf = window.requestAnimationFrame(frame);
+        }
+
+        function refresh() {
+          if (raf) window.cancelAnimationFrame(raf);
+          raf = 0;
+          lastTime = 0;
+
+          if (dead) return;
+
+          draw();
+
+          if (shouldAnimate()) {
+            raf = window.requestAnimationFrame(frame);
+          }
+        }
+
+        host.addEventListener("pointermove", (event) => {
+          if (!motionEnabled() || event.pointerType === "touch") return;
+
+          const rect = host.getBoundingClientRect();
+          targetX = ((event.clientX - rect.left) / rect.width - .5) * 2;
+          targetY = ((event.clientY - rect.top) / rect.height - .5) * 2;
+        }, { passive: true });
+
+        host.addEventListener("pointerleave", () => {
+          targetX = 0;
+          targetY = 0;
+        }, { passive: true });
+
+        document.addEventListener("visibilitychange", refresh);
+
+        if ("ResizeObserver" in window) {
+          const observer = new ResizeObserver(resize);
+          observer.observe(host);
+        } else {
+          window.addEventListener("resize", resize, { passive: true });
+        }
+
+        if ("IntersectionObserver" in window) {
+          const observer = new IntersectionObserver((entries) => {
+            visible = entries[0].isIntersecting;
+            refresh();
+          }, { rootMargin: "80px" });
+
+          observer.observe(host);
+        }
+
+        canvas.addEventListener("webglcontextlost", (event) => {
+          event.preventDefault();
+          dead = true;
+          if (raf) window.cancelAnimationFrame(raf);
+          raf = 0;
+          host.classList.remove("ready");
+        });
+
+        resize();
+        refresh();
+
+        return { refresh };
+      }
+
+      try {
+        scene = createSculpture();
+      } catch (error) {
+        $("sculpture").classList.remove("ready");
+        console.warn("Paila: showing static artwork instead of WebGL.", error);
+      }
+
+      /* --------------------------------------------
+         Optional browser-side diagnostics
+         Open index.html?qa=1
+
+         These checks are supplied, not pre-executed.
+         They do not replace visual/device/accessibility QA.
+      --------------------------------------------- */
+
+      function runChecks() {
+        const checks = [];
+
+        function check(name, test) {
+          try {
+            checks.push({
+              check: name,
+              passed: Boolean(test())
+            });
+          } catch (error) {
+            checks.push({
+              check: name,
+              passed: false,
+              error: String(error)
+            });
+          }
+        }
+
+        function apply(start, ...actions) {
+          return actions.reduce((current, action) => reduce(current, action), start);
+        }
+
+        check("Preview starts offline", () => !freshState().online);
+
+        check("Offline hand-off remains pending", () => (
+          apply(
+            freshState(),
+            { type: "SEND" },
+            { type: "EXCHANGED" }
+          ).phase === "queued"
+        ));
+
+        check("Settlement requires reconnect and sync", () => (
+          apply(
+            freshState(),
+            { type: "SEND" },
+            { type: "SYNC" },
+            { type: "SYNCED" }
+          ).phase === "settled"
+        ));
+
+        check("Premature settlement event is ignored", () => {
+          const pending = apply(
+            freshState(),
+            { type: "SEND" },
+            { type: "EXCHANGED" }
+          );
+
+          return reduce(pending, { type: "SYNCED" }) === pending;
+        });
+
+        check("Online flow can settle directly", () => (
+          apply(
+            freshState(),
+            { type: "MODE", online: true },
+            { type: "SEND" },
+            { type: "EXCHANGED" }
+          ).phase === "settled"
+        ));
+
+        check("Duplicate send is ignored while busy", () => {
+          const sending = reduce(freshState(), { type: "SEND" });
+          return reduce(sending, { type: "SEND" }) === sending;
+        });
+
+        check("Changing mode while busy is ignored", () => {
+          const sending = reduce(freshState(), { type: "SEND" });
+          return reduce(sending, { type: "MODE", online: true }) === sending;
+        });
+
+        check("Online mode restricts nearby-only channels", () => {
+          const online = reduce(freshState(), { type: "MODE", online: true });
+          return reduce(
+            online,
+            { type: "CHANNEL", channel: "bluetooth" }
+          ) === online;
+        });
+
+        check("Unknown channels are rejected", () => {
+          const initial = freshState();
+          return reduce(initial, {
+            type: "CHANNEL",
+            channel: "unknown"
+          }) === initial;
+        });
+
+        check("Replay resets to offline-ready", () => {
+          const reset = apply(
+            freshState(),
+            { type: "MODE", online: true },
+            { type: "SEND" },
+            { type: "EXCHANGED" },
+            { type: "RESET" }
+          );
+
+          return reset.phase === "ready" && !reset.online && reset.channel === "qr";
+        });
+
+        check("All element IDs are unique", () => {
+          const ids = Array.from(
+            document.querySelectorAll("[id]"),
+            (element) => element.id
+          );
+          return new Set(ids).size === ids.length;
+        });
+
+        check("All internal navigation links resolve", () => (
+          Array.from(document.querySelectorAll('a[href^="#"]')).every((link) => {
+            const id = decodeURIComponent(link.getAttribute("href").slice(1));
+            return id && document.getElementById(id);
+          })
+        ));
+
+        check("No horizontal page overflow at this viewport", () => (
+          document.documentElement.scrollWidth <=
+          document.documentElement.clientWidth + 1
+        ));
+
+        check("Static 3D fallback is present", () => (
+          Boolean(document.querySelector(".sculpture-fallback"))
+        ));
+
+        check("Reduced-motion preference is respected", () => (
+          !reducedMotion.matches || body.dataset.motion === "off"
+        ));
+
+        console.table(checks);
+
+        const passed = checks.filter((item) => item.passed).length;
+        const panel = document.createElement("details");
+        panel.className = "qa-panel shell";
+
+        const summary = document.createElement("summary");
+        summary.textContent =
+          `Developer checks: ${passed}/${checks.length} passed at ${window.innerWidth}px`;
+
+        const report = document.createElement("pre");
+        report.textContent = checks.map((item) => (
+          `${item.passed ? "PASS" : "FAIL"}  ${item.check}`
+        )).join("\n");
+
+        const note = document.createElement("p");
+        note.textContent =
+          "These are lightweight checks for this viewport, not a full visual, device, or accessibility audit.";
+
+        panel.append(summary, report, note);
+        document.body.append(panel);
+
+        document.documentElement.dataset.qa =
+          passed === checks.length ? "pass" : "fail";
+
+        return checks;
+      }
+
+      if (new URLSearchParams(window.location.search).has("qa")) {
+        window.requestAnimationFrame(() => {
+          window.requestAnimationFrame(runChecks);
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
